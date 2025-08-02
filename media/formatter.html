@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>JSON Formatter</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #0d1117;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+
+    .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px;
+      box-sizing: border-box;
+      height: 100%;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      width: 90%;
+      max-width: 1000px;
+      height: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px #30363d, 0 4px 14px rgba(0,0,0,0.4);
+      background-color: #161b22;
+    }
+
+    .toolbar {
+      padding: 10px 16px;
+      background-color: #161b22;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .toolbar button {
+      background-color: #238636;
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      margin-right: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .toolbar button:nth-child(2) {
+      background-color: #21262d;
+    }
+
+    .toolbar button:hover {
+      opacity: 0.9;
+    }
+
+    #editor {
+      flex: 1;
+      height: 100%;
+    }
+
+    .editor-container {
+      flex: 1;
+      height: calc(100% - 50px); /* Leaves space for the toolbar */
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="toolbar">
+        <button onclick="format()">Format</button>
+        <button onclick="clearEditor()">Clear</button>
+      </div>
+      <div class="editor-container">
+        <div id="editor"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/monaco-editor@0.45.0/min/vs/loader.js"></script>
+  <script>
+    let editor;
+
+    require.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.45.0/min/vs' } });
+
+    require(['vs/editor/editor.main'], () => {
+      editor = monaco.editor.create(document.getElementById('editor'), {
+        value: '',
+        language: 'json',
+        theme: 'vs-dark',
+        automaticLayout: true,
+        minimap: { enabled: false }
+      });
+    });
+
+    function format() {
+      try {
+        const value = editor.getValue();
+        const parsed = JSON.parse(value);
+        const formatted = JSON.stringify(parsed, null, 2);
+        editor.setValue(formatted);
+      } catch (err) {
+        alert("Invalid JSON:\n" + err.message);
+      }
+    }
+    function clearEditor() {
+      editor.setValue('');
+    }
+  </script>
+</body>
+</html>
