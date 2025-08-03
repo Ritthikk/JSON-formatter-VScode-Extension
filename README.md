@@ -1,71 +1,117 @@
-# json-formatter README
+# JSON Formatter
 
-This is the README for your extension "json-formatter". After writing up a brief description, we recommend including the following sections.
+A simple and elegant JSON formatter for Visual Studio Code with intuitive sidebar integration.
 
-## Features
+![JSON Formatter Extension](images/icon.png)
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## ✨ Features
 
-For example if there is an image subfolder under your extension project workspace:
+- **📋 Sidebar Integration**: Easy access through a dedicated activity bar icon
+- **🎯 One-Click Formatting**: Format and beautify JSON with a single click
+- **🎨 Monaco Editor**: Rich editing experience with syntax highlighting and dark theme
+- **🔍 Error Handling**: Clear, helpful error messages for invalid JSON syntax
+- **⚡ Fast & Lightweight**: Quick formatting without slowing down your workflow
+- **🎪 Clean Interface**: Minimalist design that stays out of your way
 
-\!\[feature X\]\(images/feature-x.png\)
+## 🚀 Usage
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### Quick Start
+1. **Find the Icon**: Look for the JSON Formatter icon (📐) in the left activity bar
+2. **Open Panel**: Click the icon to reveal the JSON Tools panel
+3. **Launch Formatter**: Click "Open JSON Formatter" button
+4. **Format JSON**: Paste your JSON and click the "Format" button
 
-## Requirements
+### Step-by-Step Guide
+1. Install the extension from the VS Code Marketplace
+2. The JSON Formatter icon will appear in your activity bar (left sidebar)
+3. Click the icon to open the JSON Tools panel
+4. Click "Open JSON Formatter" to launch the formatting interface
+5. Paste or type your JSON code in the editor
+6. Click "Format" to beautify your JSON
+7. Use "Clear" to reset the editor
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## 📸 Screenshots
 
-## Extension Settings
+### Activity Bar Integration
+The extension adds a convenient icon to your activity bar for quick access.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### Formatting Interface
+Clean, dark-themed interface with Monaco editor for the best JSON editing experience.
 
-For example:
+## 📋 Requirements
 
-This extension contributes the following settings:
+- **Visual Studio Code**: Version 1.102.0 or higher
+- **No additional dependencies**: Works out of the box
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## 🔧 Installation
 
-## Known Issues
+### From VS Code Marketplace
+1. Open VS Code
+2. Go to Extensions view (`Ctrl+Shift+X`)
+3. Search for "JSON Formatter"
+4. Click "Install"
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+### From Command Line
+```bash
+ext install rithik-srivastava.json-formatter
+```
 
-## Release Notes
+### Manual Installation
+1. Download the `.vsix` file from the [releases page](https://github.com/Ritthikk/JSON-formatter-VScode-Extension/releases)
+2. Open VS Code
+3. Run `Extensions: Install from VSIX...` from the Command Palette
+4. Select the downloaded file
 
-Users appreciate release notes as you update your extension.
+## 🎯 Why Choose This JSON Formatter?
 
-### 1.0.0
+- **🚀 No Command Palette Required**: Unlike other formatters, no need to remember keyboard shortcuts or commands
+- **🎨 Always Accessible**: Permanent icon in the sidebar means it's always one click away
+- **🏗️ Professional Design**: Matches VS Code's native extension patterns
+- **⚡ Instant Access**: No need to open files or create new documents
+- **🎪 Focused Experience**: Dedicated interface just for JSON formatting
 
-Initial release of ...
+## 🐛 Known Issues
 
-### 1.0.1
+Currently no known issues. If you encounter any problems, please [report them here](https://github.com/Ritthikk/JSON-formatter-VScode-Extension/issues).
 
-Fixed issue #.
+## 📝 Release Notes
 
-### 1.1.0
+### 1.0.0 - Initial Release
+- ✅ Sidebar integration with activity bar icon
+- ✅ Tree view panel with format button
+- ✅ Monaco editor with JSON syntax highlighting
+- ✅ Dark theme interface matching VS Code
+- ✅ Format and Clear functionality
+- ✅ Error handling for invalid JSON
 
-Added features X, Y, and Z.
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with the VS Code Extension API
+- Uses Monaco Editor for rich text editing experience
+- Inspired by the need for quick, accessible JSON formatting
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/Ritthikk/JSON-formatter-VScode-Extension/issues)
+- **Repository**: [GitHub Repository](https://github.com/Ritthikk/JSON-formatter-VScode-Extension)
+- **Marketplace**: [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=rithik-srivastava.json-formatter)
 
 ---
 
-## Following extension guidelines
+**Enjoy formatting your JSON with ease! 🎉**
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+If you find this extension helpful, please consider giving it a ⭐ on GitHub and leaving a review on the VS Code Marketplace.

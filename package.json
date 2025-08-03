@@ -1,9 +1,9 @@
 {
-  "name": "json-formatter",
-  "displayName": "JSON Formatter",
+  "name": "easy-json-formatter",
+  "displayName": "Simple JSON Formatter",
   "description": "Simple JSON formatter",
   "version": "0.0.1",
-  "publisher": "Rithik Srivastava",
+  "publisher": "RithikSrivastava",
   "engines": {
     "vscode": "^1.102.0"
   },
@@ -62,5 +62,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Ritthikk/JSON-formatter-VScode-Extension"
-  }
+  },
+  "keywords": ["json", "formatter", "beautify","json formatter"],
+  "icon": "media/icon.png"
 }
