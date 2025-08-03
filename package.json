@@ -12,6 +12,24 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "json-formatter-explorer",
+          "title": "JSON Formatter",
+          "icon": "$(bracket)"
+        }
+      ]
+    },
+    "views": {
+      "json-formatter-explorer": [
+        {
+          "id": "json-formatter-view",
+          "name": "JSON Tools",
+          "when": "true"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "json-formatter.openFormatter",
@@ -20,8 +38,8 @@
     ]
   },
   "activationEvents": [
-  "onCommand:onStartupFinished"
-],
+    "onView:json-formatter-view"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",

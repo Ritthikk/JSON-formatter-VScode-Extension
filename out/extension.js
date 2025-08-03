@@ -39,6 +39,10 @@ const vscode = __importStar(require("vscode"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 function activate(context) {
+    // Register the tree data provider for the sidebar
+    const jsonToolsProvider = new JsonToolsProvider();
+    vscode.window.registerTreeDataProvider('json-formatter-view', jsonToolsProvider);
+    // Register the command to open formatter
     const disposable = vscode.commands.registerCommand('json-formatter.openFormatter', () => {
         const panel = vscode.window.createWebviewPanel('jsonFormatter', 'JSON Formatter', vscode.ViewColumn.One, {
             enableScripts: true
@@ -48,8 +52,46 @@ function activate(context) {
         panel.webview.html = htmlContent;
     });
     context.subscriptions.push(disposable);
-    // Auto open on activation
-    vscode.commands.executeCommand('json-formatter.openFormatter');
 }
 function deactivate() { }
+/**
+ * Tree Data Provider for the JSON Tools sidebar
+ */
+class JsonToolsProvider {
+    getTreeItem(element) {
+        return element;
+    }
+    getChildren(element) {
+        if (!element) {
+            // Return root items - only the formatter button now
+            return Promise.resolve([
+                new JsonToolItem('Open JSON Formatter', 'Click to open the JSON formatter UI', vscode.TreeItemCollapsibleState.None, {
+                    command: 'json-formatter.openFormatter',
+                    title: 'Open JSON Formatter'
+                })
+            ]);
+        }
+        return Promise.resolve([]);
+    }
+}
+/**
+ * Tree Item class for individual items in the sidebar
+ */
+class JsonToolItem extends vscode.TreeItem {
+    label;
+    tooltip;
+    collapsibleState;
+    command;
+    constructor(label, tooltip, collapsibleState, command) {
+        super(label, collapsibleState);
+        this.label = label;
+        this.tooltip = tooltip;
+        this.collapsibleState = collapsibleState;
+        this.command = command;
+        this.tooltip = tooltip;
+        this.command = command;
+        // Use bracket icon for the formatter button
+        this.iconPath = new vscode.ThemeIcon('bracket');
+    }
+}
 //# sourceMappingURL=extension.js.map
