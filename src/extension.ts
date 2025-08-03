@@ -3,74 +3,144 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
-  // Register the tree data provider for the sidebar
-  const jsonToolsProvider = new JsonToolsProvider();
-  vscode.window.registerTreeDataProvider('json-formatter-view', jsonToolsProvider);
+  console.log('Activating JSON Tools extension...');
 
-  // Register the command to open formatter
-  const disposable = vscode.commands.registerCommand('json-formatter.openFormatter', () => {
+  // Create and register the tree data provider
+  const treeDataProvider = new JsonToolsTreeProvider();
+  const treeView = vscode.window.createTreeView('json-tools-list', {
+    treeDataProvider: treeDataProvider,
+    showCollapseAll: false
+  });
+
+  // Register formatter command
+  const formatterCommand = vscode.commands.registerCommand('jsontools.openFormatter', () => {
+    console.log('Opening JSON Formatter...');
     const panel = vscode.window.createWebviewPanel(
       'jsonFormatter',
       'JSON Formatter',
       vscode.ViewColumn.One,
       {
-        enableScripts: true
+        enableScripts: true,
+        retainContextWhenHidden: true
       }
     );
 
-    const htmlPath = path.join(context.extensionPath, 'media', 'formatter.html');
-    const htmlContent = fs.readFileSync(htmlPath, 'utf8');
-    panel.webview.html = htmlContent;
+    try {
+      const htmlPath = path.join(context.extensionPath, 'media', 'formatter.html');
+      const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+      panel.webview.html = htmlContent;
+    } catch (error) {
+      vscode.window.showErrorMessage('Could not load formatter.html: ' + error);
+    }
   });
 
-  context.subscriptions.push(disposable);
+  // Register comparison command
+  const comparisonCommand = vscode.commands.registerCommand('jsontools.openComparison', () => {
+    console.log('Opening JSON Comparison...');
+    const panel = vscode.window.createWebviewPanel(
+      'jsonComparison',
+      'JSON Comparison Tool',
+      vscode.ViewColumn.One,
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true
+      }
+    );
+
+    try {
+      const htmlPath = path.join(context.extensionPath, 'media', 'comparison.html');
+      const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+      panel.webview.html = htmlContent;
+    } catch (error) {
+      vscode.window.showErrorMessage('Could not load comparison.html: ' + error);
+    }
+  });
+
+  // Add to subscriptions
+  context.subscriptions.push(
+    treeView,
+    formatterCommand,
+    comparisonCommand
+  );
+
+  console.log('JSON Tools extension activated successfully!');
 }
 
 export function deactivate() {}
 
-/**
- * Tree Data Provider for the JSON Tools sidebar
- */
-class JsonToolsProvider implements vscode.TreeDataProvider<JsonToolItem> {
+class JsonToolsTreeProvider implements vscode.TreeDataProvider<ToolItem> {
   
-  getTreeItem(element: JsonToolItem): vscode.TreeItem {
+  private _onDidChangeTreeData: vscode.EventEmitter<ToolItem | undefined | null | void> = new vscode.EventEmitter<ToolItem | undefined | null | void>();
+  readonly onDidChangeTreeData: vscode.Event<ToolItem | undefined | null | void> = this._onDidChangeTreeData.event;
+
+  constructor() {
+    console.log('JsonToolsTreeProvider created');
+  }
+
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
+
+  getTreeItem(element: ToolItem): vscode.TreeItem {
+    console.log('getTreeItem called for:', element.label);
     return element;
   }
 
-  getChildren(element?: JsonToolItem): Thenable<JsonToolItem[]> {
+  getChildren(element?: ToolItem): Thenable<ToolItem[]> {
+    console.log('getChildren called, element:', element ? element.label : 'ROOT');
+    
     if (!element) {
-      // Return root items - only the formatter button now
-      return Promise.resolve([
-        new JsonToolItem(
+      // Return the root items - our two tools
+      const tools = [
+        new ToolItem(
           'Open JSON Formatter',
-          'Click to open the JSON formatter UI',
+          '📐 Format and beautify JSON data',
           vscode.TreeItemCollapsibleState.None,
-          {
-            command: 'json-formatter.openFormatter',
-            title: 'Open JSON Formatter'
-          }
+          'jsontools.openFormatter',
+          'bracket'
+        ),
+        new ToolItem(
+          'Compare JSON',
+          '🔄 Compare two JSON files side by side',
+          vscode.TreeItemCollapsibleState.None,
+          'jsontools.openComparison',
+          'diff'
         )
-      ]);
+      ];
+      
+      console.log('Returning tools:', tools.map(t => t.label));
+      return Promise.resolve(tools);
     }
+    
+    // No children for leaf items
     return Promise.resolve([]);
   }
 }
 
-/**
- * Tree Item class for individual items in the sidebar
- */
-class JsonToolItem extends vscode.TreeItem {
+class ToolItem extends vscode.TreeItem {
+  
   constructor(
     public readonly label: string,
     public readonly tooltip: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly command?: vscode.Command
+    public readonly commandId: string,
+    public readonly iconName: string
   ) {
     super(label, collapsibleState);
-    this.tooltip = tooltip;
-    this.command = command;
     
-    // Use bracket icon for the formatter button
-    this.iconPath = new vscode.ThemeIcon('bracket');
+    this.tooltip = tooltip;
+    this.description = '';
+    
+    // Set the command that gets executed when clicked
+    this.command = {
+      command: commandId,
+      title: label,
+      arguments: []
+    };
+    
+    // Set the icon
+    this.iconPath = new vscode.ThemeIcon(iconName);
+    
+    console.log(`Created ToolItem: ${label} with command: ${commandId}`);
   }
 }

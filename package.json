@@ -1,7 +1,7 @@
 {
   "name": "easy-json-formatter",
-  "displayName": "Simple JSON Formatter",
-  "description": "Simple JSON formatter",
+  "displayName": "JSON Formatter and Comparison",
+  "description": "Simple JSON formatter and comparison tool",
   "version": "0.0.1",
   "publisher": "RithikSrivastava",
   "engines": {
@@ -15,30 +15,36 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "json-formatter-explorer",
-          "title": "JSON Formatter",
-          "icon": "$(bracket)"
+          "id": "json-tools-sidebar",
+          "title": "JSON Tools",
+          "icon": "$(json)"
         }
       ]
     },
     "views": {
-      "json-formatter-explorer": [
+      "json-tools-sidebar": [
         {
-          "id": "json-formatter-view",
-          "name": "JSON Tools",
+          "id": "json-tools-list",
+          "name": "Available Tools",
           "when": "true"
         }
       ]
     },
     "commands": [
       {
-        "command": "json-formatter.openFormatter",
-        "title": "Open JSON Formatter"
+        "command": "jsontools.openFormatter",
+        "title": "Open JSON Formatter",
+        "icon": "$(json)"
+      },
+      {
+        "command": "jsontools.openComparison",
+        "title": "Compare JSON",
+        "icon": "$(diff)"
       }
     ]
   },
   "activationEvents": [
-    "onView:json-formatter-view"
+    "onView:json-tools-list"
   ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -63,6 +69,6 @@
     "type": "git",
     "url": "https://github.com/Ritthikk/JSON-formatter-VScode-Extension"
   },
-  "keywords": ["json", "formatter", "beautify","json formatter"],
+  "keywords": ["json", "formatter", "beautify", "json formatter", "compare", "diff", "diff-checker", "diffchecker", "comparison", "beyond compare"],
   "icon": "media/icon.png"
 }
