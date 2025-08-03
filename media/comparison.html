@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>JSON Comparison Tool</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-color: #0d1117;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .header {
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #58a6ff;
+      font-weight: 600;
+    }
+
+    .header p {
+      margin: 10px 0 0 0;
+      color: #8b949e;
+      font-size: 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .toolbar button {
+      background-color: #238636;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .toolbar button:hover {
+      background-color: #2ea043;
+    }
+
+    .toolbar button.clear {
+      background-color: #21262d;
+      border: 1px solid #30363d;
+    }
+
+    .toolbar button.clear:hover {
+      background-color: #30363d;
+    }
+
+    .inputs {
+      display: flex;
+      gap: 20px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .input-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .input-label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #f0f6fc;
+      font-size: 14px;
+    }
+
+    .input-container {
+      flex: 1;
+      position: relative;
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .json-input {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      padding: 16px;
+      color: white;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+    }
+
+    .json-input:focus {
+      z-index: 3;
+    }
+
+    .json-input::placeholder {
+      color: #6e7681;
+    }
+
+    .diff-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 16px;
+      box-sizing: border-box;
+      white-space: pre;
+      overflow: hidden;
+    }
+
+    .diff-line {
+      position: relative;
+      min-height: 19.5px;
+    }
+
+    .line-added {
+      background-color: rgba(46, 160, 67, 0.2);
+    }
+
+    .line-removed {
+      background-color: rgba(248, 81, 73, 0.2);
+    }
+
+    .line-modified {
+      background-color: rgba(251, 133, 0, 0.2);
+    }
+
+    .status {
+      text-align: center;
+      padding: 15px;
+      border-radius: 6px;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+
+    .status-success {
+      background-color: rgba(46, 160, 67, 0.15);
+      color: #2ea043;
+      border: 1px solid rgba(46, 160, 67, 0.3);
+    }
+
+    .status-differences {
+      background-color: rgba(88, 166, 255, 0.15);
+      color: #58a6ff;
+      border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+
+    .status-error {
+      background-color: rgba(248, 81, 73, 0.15);
+      color: #f85149;
+      border: 1px solid rgba(248, 81, 73, 0.3);
+    }
+
+    .status-empty {
+      background-color: rgba(139, 148, 158, 0.15);
+      color: #8b949e;
+      border: 1px solid rgba(139, 148, 158, 0.3);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .stat-added { color: #2ea043; }
+    .stat-removed { color: #f85149; }
+    .stat-modified { color: #fb8500; }
+
+    /* Hide scrollbars for webkit browsers */
+    .json-input::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .json-input::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .json-input::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px;
+    }
+
+    .json-input::-webkit-scrollbar-thumb:hover {
+      background: #484f58;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>JSON Comparison Tool</h1>
+      <p>Paste your JSON data in the fields below to compare them.</p>
+    </div>
+
+    <div class="toolbar">
+      <button onclick="compareJSON()">🔍 Compare</button>
+      <button class="clear" onclick="clearAll()">🗑️ Clear</button>
+    </div>
+
+    <div class="inputs">
+      <div class="input-group">
+        <div class="input-label">📄 Source JSON</div>
+        <div class="input-container">
+          <div class="diff-overlay" id="sourceOverlay"></div>
+          <textarea 
+            id="sourceJson" 
+            class="json-input" 
+            placeholder="Paste your first JSON here..."
+            onscroll="syncScroll('source')"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-label">📄 Target JSON</div>
+        <div class="input-container">
+          <div class="diff-overlay" id="targetOverlay"></div>
+          <textarea 
+            id="targetJson" 
+            class="json-input" 
+            placeholder="Paste your second JSON here..."
+            onscroll="syncScroll('target')"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="status status-empty" id="status">
+      📋 Enter JSON in both fields and click Compare to see differences
+    </div>
+  </div>
+
+  <script>
+    function syncScroll(source) {
+      // Keep overlays in sync with textarea scrolling
+      const textarea = document.getElementById(source === 'source' ? 'sourceJson' : 'targetJson');
+      const overlay = document.getElementById(source === 'source' ? 'sourceOverlay' : 'targetOverlay');
+      
+      overlay.scrollTop = textarea.scrollTop;
+      overlay.scrollLeft = textarea.scrollLeft;
+    }
+
+    function compareJSON() {
+      const sourceText = document.getElementById('sourceJson').value.trim();
+      const targetText = document.getElementById('targetJson').value.trim();
+      const status = document.getElementById('status');
+
+      if (!sourceText || !targetText) {
+        status.className = 'status status-error';
+        status.innerHTML = '⚠️ Please provide both JSON inputs to compare.';
+        clearHighlights();
+        return;
+      }
+
+      try {
+        let sourceData, targetData;
+        let isJsonComparison = false;
+
+        try {
+          sourceData = JSON.parse(sourceText);
+          targetData = JSON.parse(targetText);
+          isJsonComparison = true;
+        } catch (e) {
+          sourceData = sourceText;
+          targetData = targetText;
+        }
+
+        if (isJsonComparison) {
+          const formattedSource = JSON.stringify(sourceData, null, 2);
+          const formattedTarget = JSON.stringify(targetData, null, 2);
+          
+          // Update textareas with formatted JSON
+          document.getElementById('sourceJson').value = formattedSource;
+          document.getElementById('targetJson').value = formattedTarget;
+          
+          renderDiff(formattedSource, formattedTarget);
+        } else {
+          renderDiff(sourceText, targetText);
+        }
+
+      } catch (error) {
+        status.className = 'status status-error';
+        status.innerHTML = `❌ Error: ${error.message}`;
+        clearHighlights();
+      }
+    }
+
+    function renderDiff(sourceText, targetText) {
+      const sourceLines = sourceText.split('\n');
+      const targetLines = targetText.split('\n');
+      const diff = computeDiff(sourceLines, targetLines);
+      const status = document.getElementById('status');
+      
+      if (diff.changes === 0) {
+        status.className = 'status status-success';
+        status.innerHTML = '✅ No differences found! The content is identical.';
+        clearHighlights();
+        return;
+      }
+
+      // Apply highlighting
+      applyHighlighting('sourceOverlay', diff.sourceHighlights);
+      applyHighlighting('targetOverlay', diff.targetHighlights);
+
+      // Update status
+      status.className = 'status status-differences';
+      status.innerHTML = `
+        📊 Found ${diff.changes} difference${diff.changes > 1 ? 's' : ''}
+        <div class="stats">
+          ${diff.removals > 0 ? `<span class="stat-removed">🔴 ${diff.removals} removed</span>` : ''}
+          ${diff.additions > 0 ? `<span class="stat-added">🟢 ${diff.additions} added</span>` : ''}
+          ${diff.modifications > 0 ? `<span class="stat-modified">🟡 ${diff.modifications} modified</span>` : ''}
+        </div>
+      `;
+    }
+
+    function computeDiff(sourceLines, targetLines) {
+      const sourceHighlights = [];
+      const targetHighlights = [];
+      let additions = 0;
+      let removals = 0;
+      let modifications = 0;
+      let changes = 0;
+
+      const maxLength = Math.max(sourceLines.length, targetLines.length);
+      
+      for (let i = 0; i < maxLength; i++) {
+        const sourceLine = sourceLines[i];
+        const targetLine = targetLines[i];
+        
+        if (sourceLine === undefined) {
+          // Line only exists in target (addition)
+          sourceHighlights.push({ line: i, type: 'empty' });
+          targetHighlights.push({ line: i, type: 'added' });
+          additions++;
+          changes++;
+        } else if (targetLine === undefined) {
+          // Line only exists in source (removal)
+          sourceHighlights.push({ line: i, type: 'removed' });
+          targetHighlights.push({ line: i, type: 'empty' });
+          removals++;
+          changes++;
+        } else if (sourceLine !== targetLine) {
+          // Lines are different (modification)
+          sourceHighlights.push({ line: i, type: 'removed' });
+          targetHighlights.push({ line: i, type: 'added' });
+          modifications++;
+          changes++;
+        } else {
+          // Lines are identical
+          sourceHighlights.push({ line: i, type: 'unchanged' });
+          targetHighlights.push({ line: i, type: 'unchanged' });
+        }
+      }
+
+      return {
+        sourceHighlights,
+        targetHighlights,
+        additions,
+        removals,
+        modifications,
+        changes
+      };
+    }
+
+    function applyHighlighting(overlayId, highlights) {
+      const overlay = document.getElementById(overlayId);
+      const textarea = overlayId === 'sourceOverlay' ? 
+        document.getElementById('sourceJson') : 
+        document.getElementById('targetJson');
+      
+      const lines = textarea.value.split('\n');
+      
+      let html = '';
+      highlights.forEach((highlight, index) => {
+        const lineContent = lines[index] || '';
+        const className = highlight.type !== 'unchanged' && highlight.type !== 'empty' ? 
+          `line-${highlight.type}` : '';
+        
+        html += `<div class="diff-line ${className}">${escapeHtml(lineContent)}</div>`;
+      });
+      
+      overlay.innerHTML = html;
+    }
+
+    function clearHighlights() {
+      document.getElementById('sourceOverlay').innerHTML = '';
+      document.getElementById('targetOverlay').innerHTML = '';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function clearAll() {
+      document.getElementById('sourceJson').value = '';
+      document.getElementById('targetJson').value = '';
+      clearHighlights();
+      document.getElementById('status').className = 'status status-empty';
+      document.getElementById('status').innerHTML = '📋 Enter JSON in both fields and click Compare to see differences';
+    }
+  </script>
+</body>
+</html>
