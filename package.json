@@ -2,7 +2,7 @@
   "name": "easy-json-formatter",
   "displayName": "JSON Formatter and Comparison",
   "description": "Simple JSON formatter and comparison tool",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "publisher": "RithikSrivastava",
   "engines": {
     "vscode": "^1.102.0"
